@@ -1,6 +1,7 @@
 <h1>ExpNo 4 : Implement A* search algorithm for a Graph</h1> 
-<h3>Name:       </h3>
-<h3>Register Number:           </h3>
+<h3> Date: 26/10/2026</h3>
+<h3>Name: Swetha R </h3>
+<h3>Register Number: 212225100055</h3>
 <H3>Aim:</H3>
 <p>To ImplementA * Search algorithm for a Graph using Python 3.</p>
 <H3>Algorithm:</H3>
@@ -117,3 +118,194 @@ G 0 <br>
 <h2>Sample Output</h2>
 <hr>
 Path found: ['A', 'E', 'D', 'G']
+
+## Program:
+```
+
+from collections import defaultdict
+import networkx as nx
+import matplotlib.pyplot as plt
+
+# A* Algorithm
+def a_star(graph, heuristic, start, goal):
+    open_set = {start}
+    closed_set = set()
+    g = {start: 0}
+    parent = {start: None}
+
+    while open_set:
+        current = min(
+            open_set,
+            key=lambda node: g[node] + heuristic[node]
+        )
+
+        if current == goal:
+            path = []
+            while current is not None:
+                path.append(current)
+                current = parent[current]
+
+            path.reverse()
+            print("\nShortest Path:", " -> ".join(path))
+            print("Total Cost:", g[goal])
+            return path
+
+        open_set.remove(current)
+        closed_set.add(current)
+
+        for neighbour, cost in graph[current]:
+            if neighbour in closed_set:
+                continue
+
+            new_cost = g[current] + cost
+
+            if new_cost >= g.get(neighbour, float('inf')):
+                continue
+
+            g[neighbour] = new_cost
+            parent[neighbour] = current
+            open_set.add(neighbour)
+
+    print("Path does not exist!")
+    return None
+
+
+# Graph Creation
+graph = defaultdict(list)
+G = nx.Graph()
+
+n, e = map(int, input("Enter number of nodes and edges: ").split())
+
+print("\nEnter the edges (u v cost):")
+
+for i in range(e):
+    u, v, cost = input(f"Edge {i+1}: ").split()
+    cost = int(cost)
+
+    graph[u].append((v, cost))
+    graph[v].append((u, cost))
+
+    G.add_edge(u, v, weight=cost)
+
+
+# Display Adjacency List
+print("\nAdjacency List")
+
+for node in graph:
+    print(node, "->", graph[node])
+
+
+# Heuristic Values
+heuristic = {}
+
+print("\nEnter Heuristic Values")
+
+for i in range(n):
+    node, h = input(f"{i+1}. Node Heuristic: ").split()
+    heuristic[node] = int(h)
+
+print("\nHeuristic Values")
+print(heuristic)
+
+
+# Draw Original Graph
+plt.figure(figsize=(8, 6))
+
+pos = nx.spring_layout(G, seed=20)
+
+nx.draw_networkx_nodes(
+    G, pos,
+    node_color="skyblue",
+    node_size=1800
+)
+
+nx.draw_networkx_labels(
+    G, pos,
+    font_size=12,
+    font_weight="bold"
+)
+
+nx.draw_networkx_edges(G, pos, width=2)
+
+edge_labels = nx.get_edge_attributes(G, 'weight')
+
+nx.draw_networkx_edge_labels(
+    G, pos,
+    edge_labels=edge_labels
+)
+
+plt.title("Original Graph")
+plt.axis("off")
+plt.show()
+
+
+# Start and Goal Nodes
+start = input("\nEnter Start Node: ")
+goal = input("Enter Goal Node: ")
+
+if start not in graph:
+    print("Invalid Start Node!")
+
+elif goal not in graph:
+    print("Invalid Goal Node!")
+
+elif start not in heuristic or goal not in heuristic:
+    print("Heuristic value missing for Start or Goal Node!")
+
+else:
+    shortest_path = a_star(graph, heuristic, start, goal)
+
+    # Highlight Shortest Path in Red
+    if shortest_path:
+        path_edges = []
+
+        for i in range(len(shortest_path) - 1):
+            path_edges.append(
+                (shortest_path[i], shortest_path[i + 1])
+            )
+
+        plt.figure(figsize=(8, 6))
+
+        nx.draw_networkx_nodes(
+            G, pos,
+            node_color="skyblue",
+            node_size=1800
+        )
+
+        nx.draw_networkx_labels(
+            G, pos,
+            font_size=12,
+            font_weight="bold"
+        )
+
+        # Draw all edges in gray
+        nx.draw_networkx_edges(
+            G, pos,
+            edge_color="gray",
+            width=2
+        )
+
+        # Highlight shortest path in red
+        nx.draw_networkx_edges(
+            G, pos,
+            edgelist=path_edges,
+            edge_color="red",
+            width=4
+        )
+
+        nx.draw_networkx_edge_labels(
+            G, pos,
+            edge_labels=edge_labels
+        )
+
+        plt.title("Shortest Path Highlighted (Red)")
+        plt.axis("off")
+        plt.show()
+```
+
+## Output:
+<img width="516" height="302" alt="Screenshot 2026-10-26 084959" src="https://github.com/user-attachments/assets/0084c6cf-1e06-4b4f-bda9-da60b1dba5e5" />
+<img width="757" height="634" alt="Screenshot 2026-10-26 085025" src="https://github.com/user-attachments/assets/c2f68a94-6396-4599-8480-3c97dac44db0" />
+
+## Result:
+The Python program to Implement A * Search algorithm for a Graph has been executed successfully.
